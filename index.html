@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIGHT — Photonic Programming Language</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#04040a;color:#c0b8d0;font:13px/1.6 'Courier New',monospace;max-width:900px;margin:0 auto;padding:24px}
+h1{font:24px Georgia,serif;letter-spacing:3px;background:linear-gradient(90deg,#0af,#4de8b2,#ffa500,#f0f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+h2{font:16px Georgia,serif;color:#d4a94a;margin:32px 0 12px;letter-spacing:1px}
+.sub{font-size:10px;color:#556;margin-bottom:24px}
+a{color:#4de8b2;text-decoration:none}
+a:hover{text-decoration:underline}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:16px 0}
+.card{background:#0a0814;border:1px solid #1a1828;border-radius:8px;padding:16px;transition:border-color .2s;display:block}
+.card:hover{border-color:#d4a94a;text-decoration:none}
+.card h3{font-size:12px;color:#d4a94a;margin-bottom:4px}
+.card p{font-size:10px;color:#556;line-height:1.5}
+.card .icon{font-size:20px;margin-bottom:8px}
+.op-table{width:100%;border-collapse:collapse;font-size:10px;margin:12px 0}
+.op-table th{text-align:left;color:#d4a94a;border-bottom:1px solid #1a1828;padding:4px 8px;font-size:8px;letter-spacing:1px}
+.op-table td{padding:4px 8px;border-bottom:1px solid #0a0814;color:#556}
+.op-table td:first-child{font-size:14px;text-align:center;width:30px}
+.op-table td:nth-child(2){color:#4de8b2}
+pre{background:#0a0814;border:1px solid #1a1828;border-radius:6px;padding:12px;overflow-x:auto;font-size:11px;line-height:1.8;margin:8px 0}
+.ring-bar{display:flex;gap:4px;margin:12px 0;flex-wrap:wrap}
+.ring-pip{padding:4px 10px;border-radius:4px;font-size:9px;color:#000}
+.stats{display:flex;gap:20px;margin:16px 0;font-size:11px;color:#556}
+.stats span{color:#4de8b2}
+.foot{margin-top:40px;font-size:10px;color:#334;text-align:center}
+</style>
+</head>
+<body>
+<h1>LIGHT</h1>
+<div class="sub">the photonic programming language · 38 emoji opcodes · 888 registers · 7 rings · 5 buses</div>
+
+<div class="stats">
+  <div><span>38</span> opcodes</div>
+  <div><span>888</span> registers</div>
+  <div><span>7</span> rings</div>
+  <div><span>5</span> buses</div>
+  <div><span>κ*</span> = 0.618</div>
+</div>
+
+<pre>🔵
+🔻 4.0 "hello"
+🔻 4.1 42
+🌊 4.2 4.1 4.1
+💡🧵 {msg:4.0,answer:4.2}
+👁</pre>
+
+<h2>Apps</h2>
+<div class="grid">
+  <a href="docs/terminal.html" class="card"><div class="icon">⌨️</div><h3>Terminal</h3><p>Interactive LIGHT REPL in the browser</p></a>
+</div>
+
+<h2>Seven Rings</h2>
+<div class="ring-bar">
+  <div class="ring-pip" style="background:#ff6b00">R0 MATERIAL 700nm</div>
+  <div class="ring-pip" style="background:#a855f7">R1 WEAVE 630nm</div>
+  <div class="ring-pip" style="background:#0088ff">R2 NODE 590nm</div>
+  <div class="ring-pip" style="background:#00ff88">R3 ZONE 520nm</div>
+  <div class="ring-pip" style="background:#ff8800">R4 PROTOCOL 470nm</div>
+  <div class="ring-pip" style="background:#ff0066">R5 PRODUCT 405nm</div>
+  <div class="ring-pip" style="background:#fff">R6 FACTORY 350nm</div>
+</div>
+
+<h2>Opcodes</h2>
+<table class="op-table">
+<tr><th>EMOJI</th><th>PRASM</th><th>PRIME</th><th>LIGHT PHYSICS</th></tr>
+<tr><td>⚫</td><td>NOP</td><td>2</td><td>dark</td></tr>
+<tr><td>🔻</td><td>LD</td><td>3</td><td>absorb</td></tr>
+<tr><td>🔺</td><td>ST</td><td>5</td><td>emit</td></tr>
+<tr><td>🌊</td><td>ADD</td><td>7</td><td>interfere</td></tr>
+<tr><td>🔍</td><td>MUL</td><td>11</td><td>lens</td></tr>
+<tr><td>🔮</td><td>ATT</td><td>13</td><td>filter</td></tr>
+<tr><td>🌈</td><td>VAL</td><td>17</td><td>spectrum</td></tr>
+<tr><td>💠</td><td>PLN</td><td>19</td><td>cavity</td></tr>
+<tr><td>🪢</td><td>MDL</td><td>23</td><td>entangle</td></tr>
+<tr><td>👁</td><td>OBS</td><td>29</td><td>reflect</td></tr>
+<tr><td>⚡</td><td>JMP</td><td>31</td><td>redirect</td></tr>
+<tr><td>⚖️</td><td>CMP</td><td>37</td><td>compare λ</td></tr>
+<tr><td>🎵</td><td>JEQ</td><td>41</td><td>resonate</td></tr>
+<tr><td>💥</td><td>JNE</td><td>43</td><td>scatter</td></tr>
+<tr><td>📈</td><td>JGT</td><td>47</td><td>amplify</td></tr>
+<tr><td>🚨</td><td>INT</td><td>53</td><td>alarm</td></tr>
+<tr><td>🔽</td><td>REC</td><td>59</td><td>nest</td></tr>
+<tr><td>🔼</td><td>UNR</td><td>61</td><td>unnest</td></tr>
+<tr><td>💡</td><td>EMT</td><td>67</td><td>radiate</td></tr>
+<tr><td>🎛</td><td>RSN</td><td>71</td><td>tune</td></tr>
+<tr><td>🌑</td><td>SLP</td><td>73</td><td>dim</td></tr>
+<tr><td>✨</td><td>DRM</td><td>79</td><td>fluoresce</td></tr>
+<tr><td>☀️</td><td>WAK</td><td>83</td><td>excite</td></tr>
+<tr><td>🧯</td><td>ABT</td><td>89</td><td>quench</td></tr>
+<tr><td>🧊</td><td>FRZ</td><td>97</td><td>freeze</td></tr>
+<tr><td>🫧</td><td>CLR</td><td>101</td><td>bleach</td></tr>
+<tr><td>☠️</td><td>DIE</td><td>103</td><td>annihilate</td></tr>
+<tr><td>🔱</td><td>GEO</td><td>107</td><td>diffract</td></tr>
+<tr><td>🌀</td><td>PHI</td><td>109</td><td>cohere</td></tr>
+<tr><td>♾️</td><td>PSI</td><td>113</td><td>self-ref</td></tr>
+</table>
+
+<h2>Install</h2>
+<pre>git clone https://github.com/teslasolar/light.git
+cd light
+npm link
+light repl</pre>
+
+<h2>CLI</h2>
+<pre>light run program.light          # run a file
+light eval "🔻 4.0 42 👁"        # eval inline
+light template add a=10 b=32    # parameterized template
+light std max a=10 b=20          # stdlib function
+light pipe add:a=5:b=3 phi      # chain functions
+light compile file.prasm         # PRASM → LIGHT transpile
+light mcp sys                    # MCP tool interface
+light ops                        # opcode table
+light list                       # all functions
+light repl                       # interactive REPL</pre>
+
+<h2>Architecture</h2>
+<pre>mcp(              ← 12 tools
+  api(            ← createMCP, createVM
+    cli(          ← run/eval/template/std/pipe/compile/mcp/ops/repl
+      cmd(        ← dispatch
+        sys(      ← 888 registers, 7 rings, parse+exec
+          params( ← templates + stdlib + user fns
+            light ← 38 emoji opcodes, all primes
+          )
+        )
+      )
+    )
+  )
+)</pre>
+
+<div class="foot">
+  <a href="https://github.com/teslasolar/light">github.com/teslasolar/light</a> · MIT · Thomas Frumkin
+</div>
+</body>
+</html>
