@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LIGHT Terminal</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#04040a;color:#c0b8d0;font:12px/1.5 'Courier New',monospace;height:100vh;display:flex;flex-direction:column}
+#hdr{padding:5px 12px;border-bottom:1px solid #1a1828;display:flex;align-items:center;gap:10px;background:rgba(8,8,18,.9)}
+#hdr h1{font-size:10px;color:#d4a94a;letter-spacing:3px}
+#hdr a{color:#556;font-size:8px;text-decoration:none;margin-left:auto}
+#hdr a:hover{color:#4de8b2}
+#main{flex:1;display:flex;overflow:hidden}
+#ref{width:180px;background:rgba(8,8,18,.9);border-right:1px solid #1a1828;padding:6px;overflow-y:auto;font-size:8px}
+.op-row{display:flex;align-items:center;gap:3px;padding:1px 2px;cursor:pointer;border-radius:2px}
+.op-row:hover{background:#1a1828}
+.op-row .em{font-size:11px;width:18px;text-align:center}
+.op-row .mn{color:#d4a94a;width:24px}
+.op-row .dc{color:#334}
+.sec{color:#d4a94a;font-size:7px;letter-spacing:2px;margin:8px 0 3px;border-bottom:1px solid #1a182844;padding-bottom:1px}
+#console{flex:1;display:flex;flex-direction:column}
+#output{flex:1;overflow-y:auto;padding:8px;font-size:11px;line-height:1.7}
+.out{margin:1px 0;padding:1px 4px}
+.out.emit{color:#44ffaa;border-left:2px solid #44ffaa;padding-left:6px}
+.out.obs{color:#a050ff}
+.out.alarm{color:#dc143c}
+.out.sys{color:#d4a94a}
+.out.dim{color:#334}
+#input-row{display:flex;border-top:1px solid #1a1828;padding:0 8px;background:rgba(8,8,18,.9)}
+#prompt{color:#4de8b2;padding:6px 6px 6px 0;font-size:11px}
+#input{flex:1;background:transparent;border:none;color:#c0b8d0;font:12px 'Courier New';padding:6px 0;outline:none;caret-color:#d4a94a}
+</style>
+</head>
+<body>
+<div id="hdr">
+  <h1>LIGHT TERMINAL</h1>
+  <span style="font-size:8px;color:#556">38 ops · 888 regs · type emoji or "help"</span>
+  <a href="index.html">← back</a>
+</div>
+<div id="main">
+  <div id="ref"></div>
+  <div id="console">
+    <div id="output"></div>
+    <div id="input-row">
+      <span id="prompt">light&gt;</span>
+      <input id="input" autofocus spellcheck="false" placeholder="type emoji LIGHT...">
+    </div>
+  </div>
+</div>
+<script>
+const TAU=Math.PI*2,PHI=1.618033988749895,KS=1/PHI
+const EMOJI_OPS={'⚫':['NOP',2],'🔻':['LD',3],'🔺':['ST',5],'🌊':['ADD',7],'🔍':['MUL',11],'🔮':['ATT',13],'🌈':['VAL',17],'💠':['PLN',19],'🪢':['MDL',23],'👁':['OBS',29],'⚡':['JMP',31],'⚖️':['CMP',37],'🎵':['JEQ',41],'💥':['JNE',43],'📈':['JGT',47],'🚨':['INT',53],'🔽':['REC',59],'🔼':['UNR',61],'💡':['EMT',67],'🎛':['RSN',71],'🌑':['SLP',73],'✨':['DRM',79],'☀️':['WAK',83],'🧯':['ABT',89],'🧊':['FRZ',97],'🫧':['CLR',101],'☠️':['DIE',103],'🔱':['GEO',107],'🌀':['PHI',109],'♾️':['PSI',113]}
+const RING_PRE={'🔴':0,'🟠':1,'🟡':2,'🟢':3,'🔵':4,'🟣':5,'⚪':6}
+const BUS_GLY={'🧵':'A','⚗️':'B','🔦':'C','📶':'D','🔋':'E'}
+const RING_LAMBDA=[700,630,590,520,470,405,350]
+const REG_COUNTS=[2,3,5,11,31,127,709]
+const REG=Array.from({length:7},(_,i)=>Array(REG_COUNTS[i]).fill(0))
+const SPEC={RD:0,PC:0,BS:0,AR:0,SR:0,GM:0,FQ:7.83,VA:0,CF:1,KP:KS}
+const labels={}
+let depth=0,halted=false
+
+function rget(s){if(typeof s==='number')return s;const m=String(s).match(/^(\d)\.(\d+)$/);if(!m)return s;const ring=+m[1],idx=+m[2];if(ring>=7||!REG[ring]||idx>=REG[ring].length)return parseFloat(s)||s;return REG[ring][idx]}
+function rset(s,v){const m=s.match(/^(\d)\.(\d+)$/);if(m)REG[+m[1]][+m[2]]=v}
+function tryJSON(s){try{return JSON.parse(s)}catch{return s}}
+function parseLine(l,prog){const ring=Object.keys(RING_PRE).find(e=>l.startsWith(e));if(ring){l=l.slice(ring.length).trim();SPEC.RD=RING_PRE[ring]}const op=Object.keys(EMOJI_OPS).find(e=>l.startsWith(e));if(!op){prog.push({op:'RAW',args:[l]});return}let rest=l.slice(op.length).trim();let bus=null;const bs=Object.keys(BUS_GLY).find(e=>rest.startsWith(e));if(bs){bus=BUS_GLY[bs];rest=rest.slice(bs.length).trim()}if(!bus){const be=Object.keys(BUS_GLY).find(e=>rest.endsWith(e));if(be){bus=BUS_GLY[be];rest=rest.slice(0,-be.length).trim()}}let tail=null;for(const oe of Object.keys(EMOJI_OPS)){const idx=rest.indexOf(oe);if(idx>0){tail=rest.slice(idx);rest=rest.slice(0,idx).trim();break}}const args=rest.match(/(?:[^\s"]+|"[^"]*"|{[^}]*}|\[[^\]]*\])+/g)||[];prog.push({op:EMOJI_OPS[op][0],prime:EMOJI_OPS[op][1],args,bus,raw:l});if(tail)parseLine(tail,prog)}
+function parse(src){const lines=src.split('\n').map(l=>l.trim()).filter(l=>l&&!l.startsWith(';'));const prog=[];lines.forEach(l=>{if(l.startsWith(':')){const label=l.split(/\s/)[0];labels[label]=prog.length;if(l.split(/\s/).length>1)l=l.split(/\s/).slice(1).join(' ');else return}parseLine(l,prog)});return prog}
+function exec(prog,log){SPEC.PC=0;halted=false;depth=0;let steps=0;const out=[];while(SPEC.PC<prog.length&&!halted&&steps++<5000){const ins=prog[SPEC.PC],a=ins.args;switch(ins.op){case'NOP':break;case'LD':rset(a[0],a.length>2?tryJSON(a.slice(1).join(' ')):tryJSON(a[1]??'0'));break;case'ST':break;case'ADD':rset(a[0],(+rget(a[1])||0)+(+rget(a[2])||0));break;case'MUL':rset(a[0],(+rget(a[1])||0)*(+rget(a[2])||0));break;case'ATT':rset(a[0],rget(a[1]));break;case'VAL':rset(a[0],{val:rget(a[1]),λ:RING_LAMBDA[SPEC.RD]});break;case'PLN':break;case'MDL':rset(a[0],rget(a[0]));break;case'OBS':out.push({snap:true,depth});log(`👁 depth=${depth} κ=${SPEC.KP.toFixed(3)}`,'obs');break;case'JMP':SPEC.PC=labels[a[0]]??SPEC.PC;continue;case'CMP':SPEC.SR=rget(a[0])===tryJSON(a[1])?0:rget(a[0])>tryJSON(a[1])?1:-1;break;case'JEQ':if(SPEC.SR===0){SPEC.PC=labels[a[0]]??SPEC.PC;continue}break;case'JNE':if(SPEC.SR!==0){SPEC.PC=labels[a[0]]??SPEC.PC;continue}break;case'JGT':if(SPEC.SR>0){SPEC.PC=labels[a[0]]??SPEC.PC;continue}break;case'INT':SPEC.AR=Math.min(5,(SPEC.AR||0)+1);log(`🚨 alarm=${SPEC.AR} ${a.join(' ')}`,'alarm');break;case'REC':depth++;SPEC.RD=Math.min(6,SPEC.RD+1);break;case'UNR':depth=Math.max(0,depth-1);SPEC.RD=Math.max(0,SPEC.RD-1);break;case'EMT':{const v=a.map(x=>{const s=String(x);if(s.startsWith('{')&&s.includes(':')){return s.replace(/(\w+\.\w+)/g,m=>{const r=rget(m);return typeof r==='number'||typeof r==='object'?JSON.stringify(r):r===m?m:String(r)})}return rget(x)??tryJSON(x)});log(`💡 Bus ${ins.bus||'A'}: ${JSON.stringify(v).slice(0,120)}`,'emit');break}case'RSN':SPEC.FQ=+(a[0]?.match(/^\d+\.\d+$/)?rget(a[0]):a[0])||SPEC.FQ;break;case'SLP':log('🌑 checkpoint','sys');break;case'DRM':log('✨ dream','sys');break;case'WAK':log('☀️ wake','sys');break;case'ABT':halted=true;log('🧯 abort','alarm');break;case'FRZ':log('🧊 freeze','sys');break;case'CLR':REG.forEach(r=>r.fill(0));log('🫧 clear','sys');break;case'DIE':halted=true;log('☠️ halt','alarm');break;case'GEO':SPEC.GM=+a[0]||0;log(`🔱 geo=${SPEC.GM}`,'sys');break;case'PHI':SPEC.KP=KS;rset(a[0],SPEC.KP);break;case'PSI':rset(a[0],rget(a[0]));break}SPEC.PC++}return out}
+
+const outEl=document.getElementById('output'),inEl=document.getElementById('input')
+const history=[];let histIdx=-1
+
+function print(msg,cls=''){const d=document.createElement('div');d.className='out '+cls;d.textContent=msg;outEl.appendChild(d);outEl.scrollTop=1e6}
+
+// Build reference sidebar
+const ref=document.getElementById('ref')
+const descs={NOP:'dark',LD:'absorb',ST:'emit',ADD:'interfere',MUL:'lens',ATT:'filter',VAL:'spectrum',PLN:'cavity',MDL:'entangle',OBS:'reflect',JMP:'redirect',CMP:'compare',JEQ:'resonate',JNE:'scatter',JGT:'amplify',INT:'alarm',REC:'nest',UNR:'unnest',EMT:'radiate',RSN:'tune',SLP:'dim',DRM:'dream',WAK:'wake',ABT:'abort',FRZ:'freeze',CLR:'clear',DIE:'halt',GEO:'diffract',PHI:'cohere',PSI:'self-ref'}
+ref.innerHTML='<div class="sec">OPCODES</div>'+Object.entries(EMOJI_OPS).map(([e,[mn]])=>`<div class="op-row" data-e="${e}"><span class="em">${e}</span><span class="mn">${mn}</span><span class="dc">${descs[mn]||''}</span></div>`).join('')+'<div class="sec">RINGS</div>'+Object.entries(RING_PRE).map(([e,i])=>`<div class="op-row" data-e="${e}"><span class="em">${e}</span><span class="mn">R${i}</span><span class="dc">${RING_LAMBDA[i]}nm</span></div>`).join('')+'<div class="sec">BUSES</div>'+Object.entries(BUS_GLY).map(([e,b])=>`<div class="op-row" data-e="${e}"><span class="em">${e}</span><span class="mn">${b}</span></div>`).join('')
+
+ref.querySelectorAll('.op-row').forEach(r=>r.addEventListener('click',()=>{inEl.value+=r.dataset.e+' ';inEl.focus()}))
+
+print('LIGHT Terminal · type emoji or "help"','dim')
+
+inEl.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const line=inEl.value.trim();inEl.value='';if(!line)return
+    history.push(line);histIdx=history.length
+    print('light> '+line,'dim')
+    if(line==='help'){print('  Type emoji LIGHT directly, or:','sys');print('  help  ops  clear  reset','sys');return}
+    if(line==='clear'){outEl.innerHTML='';return}
+    if(line==='reset'){REG.forEach(r=>r.fill(0));Object.assign(SPEC,{RD:0,PC:0,BS:0,AR:0,SR:0,GM:0,FQ:7.83,VA:0,CF:1,KP:KS});print('reset','sys');return}
+    if(line==='ops'){Object.entries(EMOJI_OPS).forEach(([e,[mn,p]])=>print(`  ${e} ${mn} p=${p} ${descs[mn]||''}`,'dim'));return}
+    try{const prog=parse(line.replace(/\s*\|\s*/g,'\n'));exec(prog,(m,c)=>print(m,c))}catch(err){print(err.message,'alarm')}
+  }
+  if(e.key==='ArrowUp'){e.preventDefault();if(histIdx>0){histIdx--;inEl.value=history[histIdx]}}
+  if(e.key==='ArrowDown'){e.preventDefault();if(histIdx<history.length-1){histIdx++;inEl.value=history[histIdx]}else{histIdx=history.length;inEl.value=''}}
+})
+</script>
+</body>
+</html>

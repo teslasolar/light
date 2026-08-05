@@ -1,0 +1,73 @@
+; plan.light — LIGHT builds itself
+; What LIGHT needs to be a real language
+
+🔵 ; R4 PROTOCOL — executive planning
+
+; Phase 1: SELF-HOSTING — LIGHT programs that generate LIGHT
+🔻 4.0 "self-host"
+💠 4.0
+🔽
+  🔻 4.1 "compiler.light — transpile PRASM mnemonics to emoji and back"
+  🔻 4.2 "stdlib.light — standard library: math, string, array, io"
+  🔻 4.3 "macro.light — define reusable {{macros}} that expand inline"
+  🔻 4.4 "import.light — 🔻 module from file, composable programs"
+🔼
+💡🧵 {phase:1,items:[4.1,4.2,4.3,4.4]}
+
+; Phase 2: TYPE SYSTEM — rings ARE types
+🔻 4.5 "type-system"
+💠 4.5
+🔽
+  🔻 4.6 "ring-types — R0=bool, R1=sensor, R2=filter, R3=affect, R4=plan, R5=identity, R6=meta"
+  🔻 4.7 "type-check — validate register ring matches operation ring"
+  🔻 4.8 "coerce — auto-promote R1 value to R4 when used in PLN"
+🔼
+💡🧵 {phase:2,items:[4.6,4.7,4.8]}
+
+; Phase 3: FUNCTIONS — callable, parameterized, nestable
+🔻 4.9 "functions"
+💠 4.9
+🔽
+  🔻 4.10 "def.light — 🔱 name (params) { body } — define function"
+  🔻 4.11 "call.light — 🔽 name (args) — call with REC/UNR scoping"
+  🔻 4.12 "closure — capture parent ring state on REC"
+  🔻 4.13 "pipe-op — f | g | h chains output→input"
+🔼
+💡🧵 {phase:3,items:[4.10,4.11,4.12,4.13]}
+
+; Phase 4: IO — connect to the world
+🔻 4.14 "io"
+💠 4.14
+🔽
+  🔻 4.15 "fs.light — read/write files"
+  🔻 4.16 "http.light — fetch/serve"
+  🔻 4.17 "adb.light — watch bridge"
+  🔻 4.18 "stdin/stdout — REPL pipe"
+🔼
+💡🧵 {phase:4,items:[4.15,4.16,4.17,4.18]}
+
+; Phase 5: META — LIGHT that observes LIGHT
+🟣
+🔻 5.0 "meta"
+💠 5.0
+🔽
+  🔻 5.1 "debug.light — step, breakpoint, inspect registers"
+  🔻 5.2 "profile.light — count ops per ring, bus utilization"
+  🔻 5.3 "rewrite.light — optimize programs (dead code, constant fold)"
+  🔻 5.4 "test.light — assert template for self-testing programs"
+🔼
+💡🧵 {phase:5,items:[5.1,5.2,5.3,5.4]}
+
+; Phase 6: LANGUAGE BOOTSTRAP — LIGHT compiler written in LIGHT
+⚪
+🔻 6.0 "bootstrap"
+💠 6.0
+🔽
+  🔻 6.1 "tokenizer.light — split source into emoji tokens"
+  🔻 6.2 "parser.light — tokens → program array"
+  🔻 6.3 "eval.light — execute program array"
+  🔻 6.4 "light-in-light — the compiler IS a LIGHT program"
+🔼
+💡🧵 {phase:6,items:[6.1,6.2,6.3,6.4]}
+
+👁
