@@ -1,0 +1,15 @@
+{
+  "name": "light-lang",
+  "version": "0.1.0",
+  "description": "LIGHT — the photonic programming language. 38 emoji opcodes, 888 registers, 7 rings, 5 buses.",
+  "main": "src/runtime.js",
+  "bin": {"light": "bin/light.js"},
+  "scripts": {
+    "test": "node test/run.js",
+    "repl": "node bin/light.js"
+  },
+  "keywords": ["light","photonic","prasm","emoji","programming-language","7-rings","888-registers"],
+  "author": "Thomas Frumkin <frumkin89@gmail.com>",
+  "license": "MIT",
+  "repository": {"type": "git", "url": "https://github.com/teslasolar/light"}
+}
